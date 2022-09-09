@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  dev:
+    build: .
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    working_dir: /got
+    volumes:
+      - type: bind
+        source: ./got
+        target: /got
+    command: sh
