@@ -15,10 +15,19 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "init",
-				Usage: "initialise an empty git repository in the current directory",
+				Usage: "Create an empty Git repository or reinitialize an existing one",
 				Action: func(cCtx *cli.Context) error {
-					path := &cCtx.Args().First(), "."
+					path := cCtx.Args().First()
 					cmd.InitNewRepo(path)
+					return nil
+				},
+			},
+			{
+				Name:  "commit",
+				Usage: "Record changes to the repository",
+				Action: func(cCtx *cli.Context) error {
+					path := cCtx.Args().First()
+					cmd.Commit(path)
 					return nil
 				},
 			},

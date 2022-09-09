@@ -2,13 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 )
-
-type Repo struct {
-	WorkTree     string
-	GotDirectory string
-}
 
 func InitNewRepo(path string) (*Repo, error) {
 	path, _ = filepath.Abs(path)
@@ -17,8 +13,10 @@ func InitNewRepo(path string) (*Repo, error) {
 		GotDirectory: filepath.Join(path, ".got"),
 	}
 
-	fmt.Printf("Creating an empty got repo at path: %q\n", path)
-	fmt.Printf("Initialising got directory at: %q\n", repo.GotDirectory)
+	fmt.Printf("Initialising an empty got directory at: %q\n", repo.GotDirectory)
+	os.MkdirAll(repo.GotDirectory, os.ModePerm)
+	os.MkdirAll(filepath.Join(repo.GotDirectory, "objects"), os.ModePerm)
+	os.MkdirAll(filepath.Join(repo.GotDirectory, "refs"), os.ModePerm)
 
 	return &repo, nil
 }
