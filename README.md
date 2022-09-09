@@ -14,10 +14,17 @@ docker compose run dev
 then, for example:
 
 ```sh
-# go build
-# go fmt
-# ./got
-Hello world!
-# exit
+go fmt
+go build
+./got
+➜ Hello world!
 ```
 
+## create a `got` alias
+
+```sh
+docker compose build got
+alias got="docker compose run got"
+got
+➜ Hello world!
+```

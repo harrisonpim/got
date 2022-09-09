@@ -19,3 +19,13 @@ services:
         source: ./got
         target: /got
     command: sh
+  got:
+    build: .
+    stdin_open: true
+    tty: true
+    working_dir: /got
+    volumes:
+      - type: bind
+        source: ./got
+        target: /got
+    entrypoint: ./got
