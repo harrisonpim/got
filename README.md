@@ -10,3 +10,14 @@ Run go in docker
 docker compose build dev
 docker compose run dev
 ```
+
+then, for example:
+
+```sh
+# go build
+# go fmt
+# ./got
+Hello world!
+# exit
+```
+
