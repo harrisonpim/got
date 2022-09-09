@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/harrisonpim/got/cmd"
 	"github.com/urfave/cli/v2"
 )
 
@@ -12,9 +12,16 @@ func main() {
 	app := &cli.App{
 		Name:  "got",
 		Usage: "git, in go",
-		Action: func(*cli.Context) error {
-			fmt.Println("Hello world!")
-			return nil
+		Commands: []*cli.Command{
+			{
+				Name:  "init",
+				Usage: "initialise an empty git repository in the current directory",
+				Action: func(cCtx *cli.Context) error {
+					path := &cCtx.Args().First(), "."
+					cmd.InitNewRepo(path)
+					return nil
+				},
+			},
 		},
 	}
 
