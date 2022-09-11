@@ -27,7 +27,9 @@ func main() {
 				Usage: "Record changes to the repository",
 				Action: func(cCtx *cli.Context) error {
 					path := cCtx.Args().First()
-					cmd.Commit(path)
+					if err := cmd.Commit(path); err != nil {
+						return err
+					}
 					return nil
 				},
 			},
