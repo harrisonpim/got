@@ -15,18 +15,28 @@ func Commit(path string) error {
 	if err != nil {
 		return err
 	}
+
+	entries := []internals.Entry{}
 	for _, file := range fileList {
-		// read each file, and store the data as a blob
+		// parse each file in the worktree as a blob
 		data, err := os.ReadFile(file.Path)
 		if err != nil {
 			return err
 		}
 		blob := internals.NewBlob(repo, data)
 
-		// write the hashed data to a path in ".got/objects" according to the git spec
+		// write the data to .got/objects
 		if err := repo.WriteObject(*blob.Object); err != nil {
 			return err
 		}
+		entries = append(entries, internals.Entry{
+			ID:   blob.ID,
+			Name: file.Path,
+		})
+	}
+	tree := internals.NewTree(entries)
+	if err := repo.WriteObject(*tree.Object); err != nil {
+		return err
 	}
 	return nil
 }

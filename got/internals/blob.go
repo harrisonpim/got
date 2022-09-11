@@ -1,15 +1,16 @@
 package internals
 
 type Blob struct {
-	Repository *Repo
+	ID string
 	*Object
 }
 
 func NewBlob(repo *Repo, data []byte) *Blob {
+	object := &Object{ObjectType: "blob", Data: data}
+	id, _ := object.Hash()
 	blob := Blob{
-		Repository: repo,
-		Object:     &Object{ObjectType: "blob", Data: data},
+		Object: object,
+		ID:     id,
 	}
 	return &blob
 }
-
