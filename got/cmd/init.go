@@ -3,10 +3,12 @@ package cmd
 import (
 	"fmt"
 	"os"
+
+	"github.com/harrisonpim/got/internals"
 )
 
-func InitNewRepo(path string) (*Repo, error) {
-	repo, err := NewRepo(path)
+func InitNewRepo(path string) (*internals.Repo, error) {
+	repo, err := internals.NewRepo(path)
 	if err != nil {
 		return nil, err
 	}

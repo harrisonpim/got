@@ -11,11 +11,11 @@ import (
 func main() {
 	app := &cli.App{
 		Name:  "got",
-		Usage: "git, in go",
+		Usage: "git in go",
 		Commands: []*cli.Command{
 			{
 				Name:  "init",
-				Usage: "Create an empty Git repository or reinitialize an existing one",
+				Usage: "Create an empty Got repository or reinitialize an existing one",
 				Action: func(cCtx *cli.Context) error {
 					path := cCtx.Args().First()
 					cmd.InitNewRepo(path)

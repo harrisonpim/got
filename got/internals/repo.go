@@ -1,10 +1,10 @@
-package cmd
+package internals
 
 import (
+	"bytes"
+	"compress/zlib"
 	"os"
 	"path/filepath"
-
-	"github.com/harrisonpim/got/util"
 )
 
 type Repo struct {
@@ -27,14 +27,14 @@ func NewRepo(path string) (*Repo, error) {
 	}, nil
 }
 
-func (repo Repo) ListFiles() ([]util.Path, error) {
-	fileList := []util.Path{}
+func (repo Repo) ListFiles() ([]Path, error) {
+	fileList := []Path{}
 	err := filepath.Walk(repo.RootDirectory,
 		func(path string, _ os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
-			p, err := util.NewPath(path)
+			p, err := NewPath(path)
 			pathIsInGotDirectory := false
 			for _, component := range p.Components {
 				if component == ".got" {
@@ -50,4 +50,25 @@ func (repo Repo) ListFiles() ([]util.Path, error) {
 		return nil, err
 	}
 	return fileList, nil
+}
+
+func (repo Repo) WriteObject(object Object) error {
+	sha1hash, decoratedData := object.Hash()
+	objectPath, err := NewPath(filepath.Join(repo.ObjectDirectory, string(sha1hash[0:2]), string(sha1hash[2:])))
+	if err != nil {
+		return err
+	}
+	var compressed bytes.Buffer
+	w := zlib.NewWriter(&compressed)
+	w.Write(decoratedData)
+	w.Close()
+	if !objectPath.Exists {
+		if err := os.MkdirAll(objectPath.Directory, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	if err := os.WriteFile(objectPath.Path, compressed.Bytes(), os.ModePerm); err != nil {
+		return err
+	}
+	return nil
 }
