@@ -7,8 +7,7 @@ import (
 )
 
 type Entry struct {
-	ID   string
-	Name string
+	ID, Name string
 }
 
 type Tree struct {
@@ -32,4 +31,8 @@ func NewTree(entries []Entry) *Tree {
 	}
 
 	return &tree
+}
+
+func (tree *Tree) String() string {
+	return string(tree.Data)
 }

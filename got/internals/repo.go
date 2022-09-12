@@ -8,10 +8,7 @@ import (
 )
 
 type Repo struct {
-	RootDirectory   string
-	GotDirectory    string
-	ObjectDirectory string
-	RefsDirectory   string
+	RootDirectory, GotDirectory, ObjectDirectory, RefsDirectory string
 }
 
 func NewRepo(path string) (*Repo, error) {

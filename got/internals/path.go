@@ -7,12 +7,9 @@ import (
 )
 
 type Path struct {
-	Path        string
-	Filename    string
-	Directory   string
-	Components  []string
-	Exists      bool
-	IsDirectory bool
+	Path, Filename, Directory string
+	Components                []string
+	Exists, IsDirectory       bool
 }
 
 func NewPath(path string) (*Path, error) {

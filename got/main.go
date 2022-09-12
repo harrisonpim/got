@@ -10,8 +10,9 @@ import (
 
 func main() {
 	app := &cli.App{
-		Name:  "got",
-		Usage: "git in go",
+		Name:                   "got",
+		Usage:                  "git in go",
+		UseShortOptionHandling: true,
 		Commands: []*cli.Command{
 			{
 				Name:  "init",
@@ -25,9 +26,13 @@ func main() {
 			{
 				Name:  "commit",
 				Usage: "Record changes to the repository",
+				Flags: []cli.Flag{
+					&cli.StringFlag{Name: "message", Aliases: []string{"m"}},
+				},
 				Action: func(cCtx *cli.Context) error {
-					path := cCtx.Args().First()
-					if err := cmd.Commit(path); err != nil {
+					path := cCtx.Args().Get(0)
+					message := cCtx.String("message")
+					if err := cmd.Commit(path, message); err != nil {
 						return err
 					}
 					return nil

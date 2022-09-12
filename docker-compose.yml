@@ -4,6 +4,8 @@ services:
   go:
     build: .
     working_dir: /got
+    env_file:
+      - .env
     volumes:
       - type: bind
         source: ./got
@@ -11,9 +13,11 @@ services:
     entrypoint: go
   dev:
     build: .
+    working_dir: /got
     stdin_open: true
     tty: true
-    working_dir: /got
+    env_file:
+      - .env
     volumes:
       - type: bind
         source: ./got
@@ -21,9 +25,11 @@ services:
     command: sh
   got:
     build: .
+    working_dir: /got
     stdin_open: true
     tty: true
-    working_dir: /got
+    env_file:
+      - .env
     volumes:
       - type: bind
         source: ./got

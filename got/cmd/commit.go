@@ -6,7 +6,7 @@ import (
 	"github.com/harrisonpim/got/internals"
 )
 
-func Commit(path string) error {
+func Commit(path string, message string) error {
 	repo, err := internals.NewRepo(path)
 	if err != nil {
 		return err
@@ -36,6 +36,15 @@ func Commit(path string) error {
 	}
 	tree := internals.NewTree(entries)
 	if err := repo.WriteObject(*tree.Object); err != nil {
+		return err
+	}
+
+	authorName := os.Getenv("GIT_AUTHOR_NAME")
+	authorEmail := os.Getenv("GIT_AUTHOR_EMAIL")
+	author := internals.NewAuthor(authorName, authorEmail)
+
+	commit := internals.NewCommit(tree, author, message)
+	if err := repo.WriteObject(*commit.Object); err != nil {
 		return err
 	}
 	return nil
