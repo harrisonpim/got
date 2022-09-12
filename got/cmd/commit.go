@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/harrisonpim/got/internals"
 )
@@ -45,6 +46,11 @@ func Commit(path string, message string) error {
 
 	commit := internals.NewCommit(tree, author, message)
 	if err := repo.WriteObject(*commit.Object); err != nil {
+		return err
+	}
+
+	headPath := filepath.Join(repo.GotDirectory, "HEAD")
+	if err := os.WriteFile(headPath, []byte(commit.ID), os.ModePerm); err != nil {
 		return err
 	}
 	return nil
