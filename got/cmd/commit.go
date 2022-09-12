@@ -39,8 +39,8 @@ func Commit(path string, message string) error {
 		return err
 	}
 
-	authorName := os.Getenv("GIT_AUTHOR_NAME")
-	authorEmail := os.Getenv("GIT_AUTHOR_EMAIL")
+	authorName := os.Getenv("GOT_AUTHOR_NAME")
+	authorEmail := os.Getenv("GOT_AUTHOR_EMAIL")
 	author := internals.NewAuthor(authorName, authorEmail)
 
 	commit := internals.NewCommit(tree, author, message)

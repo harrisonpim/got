@@ -11,6 +11,7 @@ type Entry struct {
 }
 
 type Tree struct {
+	ID string
 	*Object
 	Entries []Entry
 }
@@ -24,9 +25,12 @@ func NewTree(entries []Entry) *Tree {
 	for _, entry := range entries {
 		fmt.Fprintf(&b, "100644 %s\t%s\n", entry.ID, entry.Name)
 	}
+	object := &Object{ObjectType: "tree", Data: []byte(b.String())}
+	id, _ := object.Hash()
 
 	tree := Tree{
-		Object:  &Object{ObjectType: "tree", Data: []byte(b.String())},
+		ID:      id,
+		Object:  object,
 		Entries: entries,
 	}
 

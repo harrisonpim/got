@@ -6,7 +6,7 @@ import (
 )
 
 type Commit struct {
-	Message string
+	ID, Message string
 	*Object
 	Tree
 	Author
@@ -14,17 +14,21 @@ type Commit struct {
 
 func NewCommit(tree *Tree, author *Author, message string) *Commit {
 	lines := []string{
-		fmt.Sprintf("Tree: %s", tree.String()),
-		fmt.Sprintf("Author: %s", author.String()),
+		fmt.Sprintf("tree %s", tree.ID),
+		fmt.Sprintf("author %s", author.String()),
+		fmt.Sprintf("committer %s", author.String()),
 		"",
 		message,
 	}
 	data := strings.Join(lines, "\n")
+	object := &Object{ObjectType: "commit", Data: []byte(data)}
+	id, _ := object.Hash()
 	return &Commit{
+		ID:      id,
 		Tree:    *tree,
 		Author:  *author,
 		Message: message,
-		Object:  &Object{ObjectType: "commit", Data: []byte(data)},
+		Object:  object,
 	}
 }
 
