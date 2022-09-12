@@ -7,13 +7,23 @@ import (
 )
 
 type Object struct {
-	ObjectType string
-	Data       []byte
+	ID, ObjectType      string
+	Data, DecoratedData []byte
 }
 
-func (object *Object) Hash() (string, []byte) {
-	header := []byte(object.ObjectType + " " + strconv.Itoa(len(object.Data)) + "\x00")
-	decoratedData := append(header, object.Data...)
+func NewObject(objectType string, data []byte) *Object {
+	id, decoratedData := hash(objectType, data)
+	return &Object{
+		Data:          data,
+		ObjectType:    objectType,
+		ID:            id,
+		DecoratedData: decoratedData,
+	}
+}
+
+func hash(objectType string, data []byte) (string, []byte) {
+	header := []byte(objectType + " " + strconv.Itoa(len(data)) + "\x00")
+	decoratedData := append(header, data...)
 
 	h := sha1.New()
 	h.Write(decoratedData)

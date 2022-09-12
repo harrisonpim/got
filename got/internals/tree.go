@@ -2,16 +2,17 @@ package internals
 
 import (
 	"fmt"
+	"io/fs"
 	"sort"
 	"strings"
 )
 
 type Entry struct {
 	ID, Name string
+	Mode     fs.FileMode
 }
 
 type Tree struct {
-	ID string
 	*Object
 	Entries []Entry
 }
@@ -23,18 +24,13 @@ func NewTree(entries []Entry) *Tree {
 
 	var b strings.Builder
 	for _, entry := range entries {
-		fmt.Fprintf(&b, "100644 %s\t%s\n", entry.ID, entry.Name)
+		fmt.Fprintf(&b, "%s %s\t%s\n", entry.Mode, entry.ID, entry.Name)
 	}
-	object := &Object{ObjectType: "tree", Data: []byte(b.String())}
-	id, _ := object.Hash()
 
-	tree := Tree{
-		ID:      id,
-		Object:  object,
+	return &Tree{
+		Object:  NewObject("tree", []byte(b.String())),
 		Entries: entries,
 	}
-
-	return &tree
 }
 
 func (tree *Tree) String() string {

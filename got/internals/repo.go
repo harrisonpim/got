@@ -50,22 +50,38 @@ func (repo Repo) ListFiles() ([]Path, error) {
 }
 
 func (repo Repo) WriteObject(object Object) error {
-	sha1hash, decoratedData := object.Hash()
-	objectPath, err := NewPath(filepath.Join(repo.ObjectDirectory, string(sha1hash[0:2]), string(sha1hash[2:])))
+	objectPath, err := NewPath(filepath.Join(repo.ObjectDirectory, string(object.ID[0:2]), string(object.ID[2:])))
 	if err != nil {
 		return err
 	}
-	var compressed bytes.Buffer
-	w := zlib.NewWriter(&compressed)
-	w.Write(decoratedData)
-	w.Close()
 	if !objectPath.Exists {
+		var compressed bytes.Buffer
+		w := zlib.NewWriter(&compressed)
+		w.Write(object.DecoratedData)
+		w.Close()
 		if err := os.MkdirAll(objectPath.Directory, os.ModePerm); err != nil {
 			return err
 		}
+		if err := os.WriteFile(objectPath.Path, compressed.Bytes(), os.ModePerm); err != nil {
+			return err
+		}
 	}
-	if err := os.WriteFile(objectPath.Path, compressed.Bytes(), os.ModePerm); err != nil {
+	return nil
+}
+
+func (repo *Repo) UpdateHead(commit Commit) error {
+	headPath := filepath.Join(repo.GotDirectory, "HEAD")
+	if err := os.WriteFile(headPath, []byte(commit.ID), os.ModePerm); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (repo *Repo) ReadHead() (string, error) {
+	headPath := filepath.Join(repo.GotDirectory, "HEAD")
+	data, err := os.ReadFile(headPath)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }

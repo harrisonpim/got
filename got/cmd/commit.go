@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/harrisonpim/got/internals"
 )
@@ -25,6 +25,7 @@ func Commit(path string, message string) error {
 			return err
 		}
 		blob := internals.NewBlob(repo, data)
+		fileInfo, err := os.Stat(file.Path)
 
 		// write the data to .got/objects
 		if err := repo.WriteObject(*blob.Object); err != nil {
@@ -33,6 +34,7 @@ func Commit(path string, message string) error {
 		entries = append(entries, internals.Entry{
 			ID:   blob.ID,
 			Name: file.Path,
+			Mode: fileInfo.Mode(),
 		})
 	}
 	tree := internals.NewTree(entries)
@@ -44,14 +46,19 @@ func Commit(path string, message string) error {
 	authorEmail := os.Getenv("GOT_AUTHOR_EMAIL")
 	author := internals.NewAuthor(authorName, authorEmail)
 
-	commit := internals.NewCommit(tree, author, message)
+	isRoot := ""
+	parent, err := repo.ReadHead()
+	if err != nil {
+		isRoot = "(root-commit) "
+	}
+
+	commit := internals.NewCommit(parent, tree, author, message)
 	if err := repo.WriteObject(*commit.Object); err != nil {
 		return err
 	}
-
-	headPath := filepath.Join(repo.GotDirectory, "HEAD")
-	if err := os.WriteFile(headPath, []byte(commit.ID), os.ModePerm); err != nil {
+	if err := repo.UpdateHead(*commit); err != nil {
 		return err
 	}
+	fmt.Printf("[%s%s] %s", isRoot, commit.ID, message)
 	return nil
 }
